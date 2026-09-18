@@ -113,4 +113,27 @@ class LocationService {
       return null;
     }
   }
+
+  /// Query location authorization status from native CoreLocation.
+  /// Returns 'authorizedAlways', 'authorizedWhenInUse', 'denied', 'restricted', 'notDetermined', or 'unknown'.
+  Future<String> getAuthorizationStatus() async {
+    try {
+      final String? result =
+          await _methodChannel.invokeMethod<String>('getAuthorizationStatus');
+      return result ?? 'notDetermined';
+    } on PlatformException catch (_) {
+      return 'unknown';
+    }
+  }
+
+  /// Open iOS/Android device app settings for Trailwire.
+  Future<bool> openAppSettings() async {
+    try {
+      final bool? result =
+          await _methodChannel.invokeMethod<bool>('openAppSettings');
+      return result ?? false;
+    } on PlatformException catch (_) {
+      return false;
+    }
+  }
 }

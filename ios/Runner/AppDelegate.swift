@@ -93,6 +93,38 @@ public class LocationTrackingManager: NSObject, CLLocationManagerDelegate, Flutt
         result(nil)
       }
 
+    case "getAuthorizationStatus":
+      let status: CLAuthorizationStatus
+      if #available(iOS 14.0, *) {
+        status = locationManager?.authorizationStatus ?? .notDetermined
+      } else {
+        status = CLLocationManager.authorizationStatus()
+      }
+      switch status {
+      case .authorizedAlways:
+        result("authorizedAlways")
+      case .authorizedWhenInUse:
+        result("authorizedWhenInUse")
+      case .denied:
+        result("denied")
+      case .restricted:
+        result("restricted")
+      case .notDetermined:
+        result("notDetermined")
+      @unknown default:
+        result("unknown")
+      }
+
+    case "openAppSettings":
+      if let url = URL(string: UIApplication.openSettingsURLString),
+         UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url, options: [:]) { success in
+          result(success)
+        }
+      } else {
+        result(false)
+      }
+
     default:
       result(FlutterMethodNotImplemented)
     }

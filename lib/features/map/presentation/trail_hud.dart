@@ -13,6 +13,7 @@ class TrailHud extends StatelessWidget {
   final VoidCallback onFinish;
   final VoidCallback onMarkWaypoint;
   final VoidCallback? onStartTrip;
+  final VoidCallback? onOpenAccount;
   final VoidCallback? onRecenter;
   final VoidCallback? onSync;
   final VoidCallback? onDownloadOffline;
@@ -33,6 +34,7 @@ class TrailHud extends StatelessWidget {
     required this.onFinish,
     required this.onMarkWaypoint,
     this.onStartTrip,
+    this.onOpenAccount,
     this.onRecenter,
     this.onSync,
     this.onDownloadOffline,
@@ -76,40 +78,55 @@ class TrailHud extends StatelessWidget {
     return SafeArea(
       child: Stack(
         children: [
-          // Basecamp Top Status Badge
+          // Basecamp Top Status Badge & Account Profile Button
           Positioned(
             top: 12,
             left: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xE60B0F12),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF334155), width: 1.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xE60B0F12),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFF334155), width: 1.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.terrain_rounded, color: Color(0xFF10B981), size: 16),
+                      SizedBox(width: 8),
+                      Text(
+                        'BASECAMP',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (onOpenAccount != null) ...[
+                  const SizedBox(width: 8),
+                  _buildHeaderButton(
+                    key: const ValueKey('account_btn'),
+                    onPressed: onOpenAccount!,
+                    tooltip: 'Manage Account & Trips',
+                    icon: Icons.person_rounded,
+                    foregroundColor: const Color(0xFF38BDF8),
                   ),
                 ],
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.terrain_rounded, color: Color(0xFF00E676), size: 16),
-                  SizedBox(width: 8),
-                  Text(
-                    'BASECAMP',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
 
@@ -146,14 +163,14 @@ class TrailHud extends StatelessWidget {
                     onPressed: onSync!,
                     tooltip: 'Sync with Cloud',
                     icon: Icons.sync_rounded,
-                    foregroundColor: const Color(0xFF00E676),
+                    foregroundColor: const Color(0xFF10B981),
                     child: isSyncing
                         ? const SizedBox(
                             width: 14,
                             height: 14,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.0,
-                              color: Color(0xFF00E676),
+                              color: Color(0xFF10B981),
                             ),
                           )
                         : null,
@@ -172,46 +189,60 @@ class TrailHud extends StatelessWidget {
             ),
           ),
 
-          // Basecamp Prominent Full-Width "Start Trip" Button
+          // Basecamp Soft Ergonomic "Start Trip" CTA Button
           if (onStartTrip != null)
             Positioned(
-              left: 16,
-              right: 16,
+              left: 20,
+              right: 20,
               bottom: 24,
               child: Container(
-                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: const Color(0xE60B0F12),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFF1E293B), width: 1.5),
+                  borderRadius: BorderRadius.circular(28),
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFF10B981), // Soft alpine emerald
+                      Color(0xFF059669), // Forest sage
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      color: const Color(0xFF059669).withValues(alpha: 0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
                 child: ElevatedButton.icon(
                   key: const ValueKey('start_trip_btn'),
                   onPressed: onStartTrip,
-                  icon: const Icon(Icons.navigation_rounded, size: 22),
+                  icon: const Icon(Icons.navigation_rounded, size: 20),
                   label: const Text(
                     'START TRIP',
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.2,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.8,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00E676),
-                    foregroundColor: const Color(0xFF0B0F12),
-                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(28),
+                      side: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        width: 1.0,
+                      ),
                     ),
-                    elevation: 4,
                   ),
                 ),
               ),

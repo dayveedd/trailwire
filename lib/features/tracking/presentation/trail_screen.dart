@@ -8,6 +8,7 @@ import '../../../core/database/models/waypoint.dart';
 import '../../map/presentation/trail_hud.dart';
 import '../../map/presentation/trail_map_view.dart';
 import '../../map/services/offline_map_service.dart';
+import '../../auth/presentation/account_screen.dart';
 import '../../auth/presentation/value_gate_modal.dart';
 import '../../auth/services/auth_service.dart';
 import '../../export/services/gpx_service.dart';
@@ -705,6 +706,14 @@ class _TrailScreenState extends State<TrailScreen> {
     }
   }
 
+  void _openAccountScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const AccountScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -727,6 +736,7 @@ class _TrailScreenState extends State<TrailScreen> {
             currentSpeedMps: _currentSpeed,
             isPaused: _recordingService.isPaused,
             onStartTrip: _handleStartTrip,
+            onOpenAccount: _openAccountScreen,
             onPause: _handlePause,
             onResume: _handleResume,
             onFinish: _handleFinish,

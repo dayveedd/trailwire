@@ -65,6 +65,8 @@ void main() {
     bool recentered = false;
     bool startedTrip = false;
 
+    bool openedAccount = false;
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -72,6 +74,7 @@ void main() {
             mode: AppMode.basecamp,
             activeRoute: null,
             onStartTrip: () => startedTrip = true,
+            onOpenAccount: () => openedAccount = true,
             onPause: () {},
             onResume: () {},
             onFinish: () {},
@@ -85,8 +88,9 @@ void main() {
       ),
     );
 
-    // Verify Basecamp brand badge and tools exist
+    // Verify Basecamp brand badge, account button, and tools exist
     expect(find.text('BASECAMP'), findsOneWidget);
+    expect(find.byKey(const ValueKey('account_btn')), findsOneWidget);
     expect(find.byKey(const ValueKey('toggle_style_btn')), findsOneWidget);
     expect(find.byKey(const ValueKey('offline_pack_btn')), findsOneWidget);
     expect(find.byKey(const ValueKey('cloud_sync_btn')), findsOneWidget);
@@ -99,6 +103,10 @@ void main() {
     expect(find.byKey(const ValueKey('waypoint_fab')), findsNothing);
     expect(find.text('LIVE RECORDING'), findsNothing);
     expect(find.text('TRACKING PAUSED'), findsNothing);
+
+    // Tap account button
+    await tester.tap(find.byKey(const ValueKey('account_btn')));
+    expect(openedAccount, isTrue);
 
     // Tap each button
     await tester.tap(find.byKey(const ValueKey('toggle_style_btn')));
